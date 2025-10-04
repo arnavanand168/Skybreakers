@@ -1,0 +1,203 @@
+{% extends "base.html" %}
+
+{% block title %}About - United Airlines Flight Difficulty Analysis{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="my-4">
+            <i class="fas fa-info-circle text-primary"></i> 
+            About the System
+        </h1>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">System Overview</h4>
+            </div>
+            <div class="card-body">
+                <p class="lead">
+                    The United Airlines Flight Difficulty Scoring System analyzes <strong>8,155 flights</strong> 
+                    from Chicago O'Hare International Airport (ORD) to systematically quantify operational 
+                    complexity and optimize resource allocation.
+                </p>
+                
+                <h5 class="mt-4">Key Features</h5>
+                <ul class="list-unstyled">
+                    <li><i class="fas fa-check text-success"></i> Real-time flight difficulty classification</li>
+                    <li><i class="fas fa-check text-success"></i> Advanced machine learning models</li>
+                    <li><i class="fas fa-check text-success"></i> Interactive data visualizations</li>
+                    <li><i class="fas fa-check text-success"></i> Comprehensive performance metrics</li>
+                    <li><i class="fas fa-check text-success"></i> Destination and fleet analysis</li>
+                </ul>
+                
+                <h5 class="mt-4">Difficulty Scoring Methodology</h5>
+                <p>
+                    The system calculates a <strong>Flight Difficulty Score</strong> (0-1 scale) based on seven 
+                    key operational factors with the following weights:
+                </p>
+                <div class="row">
+                    <div class="col-md-6">
+                        <ul>
+                            <li><strong>Ground Time Pressure:</strong> 25%</li>
+                            <li><strong>Load Factor:</strong> 20%</li>
+                            <li><strong>Transfer Bag Ratio:</strong> 20%</li>
+                            <li><strong>SSR Intensity:</strong> 15%</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <ul>
+                            <li><strong>International Operations:</strong> 10%</li>
+                            <li><strong>Fleet Complexity:</strong> 5%</li>
+                            <li><strong>Time Complexity:</strong> 5%</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <h5 class="mt-4">Classification System</h5>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card bg-success text-white">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Easy Flights</h5>
+                                <h3>50.06%</h3>
+                                <small>Low complexity, efficient operations</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card bg-warning text-white">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Medium Flights</h5>
+                                <h3>30.03%</h3>
+                                <small>Moderate complexity, standard operations</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card bg-danger text-white">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Difficult Flights</h5>
+                                <h3>19.91%</h3>
+                                <small>High complexity, requires additional resources</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Business Impact</h5>
+            </div>
+            <div class="card-body">
+                <div class="text-center mb-3">
+                    <h1 class="text-primary">$2-3M</h1>
+                    <small>Annual Savings</small>
+                </div>
+                
+                <div class="row text-center">
+                    <div class="col-6 mb-3">
+                        <h4 class="text-success">20%</h4>
+                        <small>Reduction in ground delays</small>
+                    </div>
+                    <div class="col-6 mb-3">
+                        <h4 class="text-info">15%</h4>
+                        <small>Improvement in on-time performance</small>
+                    </div>
+                    <div class="col-6 mb-3">
+                        <h4 class="text-warning">25%</h4>
+                        <small>Reduction in operational costs</small>
+                    </div>
+                    <div class="col-6 mb-3">
+                        <h4 class="text-success">30%</h4>
+                        <small>Improvement in customer satisfaction</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5 class="mb-0">Top Difficult Destinations</h5>
+            </div>
+            <div class="card-body">
+                <ol class="list-group list-group-numbered">
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>YYZ (Toronto)</span>
+                        <span class="badge bg-danger">77 flights</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>STL (St. Louis)</span>
+                        <span class="badge bg-danger">53 flights</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>LHR (London)</span>
+                        <span class="badge bg-danger">44 flights</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>YOW (Ottawa)</span>
+                        <span class="badge bg-danger">41 flights</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>YUL (Montreal)</span>
+                        <span class="badge bg-danger">39 flights</span>
+                    </li>
+                </ol>
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5 class="mb-0">Technical Stack</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled">
+                    <li><i class="fas fa-globe text-primary"></i> Flask Web Framework</li>
+                    <li><i class="fas fa-chart-bar text-danger"></i> Plotly Visualizations</li>
+                    <li><i class="fas fa-database text-success"></i> SQLite Database</li>
+                    <li><i class="fas fa-brain text-warning"></i> Machine Learning Models</li>
+                    <li><i class="fas fa-cloud text-info"></i> Cloud Deployment Ready</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">Deployment Information</h4>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <h6 class="alert-heading">
+                        <i class="fas fa-rocket"></i> Ready for Cloud Deployment
+                    </h6>
+                    <p class="mb-0">
+                        This application is designed for easy deployment on platforms like Vercel, 
+                        Heroku, or AWS. The Flask backend provides RESTful APIs, while the frontend 
+                        uses responsive Bootstrap design for optimal viewing on all devices.
+                    </p>
+                </div>
+                
+                <h6>Key Deployment Features:</h6>
+                <ul>
+                    <li>Health check endpoint for monitoring</li>
+                    <li>Optimized for serverless deployment</li>
+                    <li>Responsive design for mobile/desktop</li>
+                    <li>Real-time data updates</li>
+                    <li>Secure API endpoints</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,217 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - United Airlines Flight Difficulty Analysis{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="my-4">
+            <i class="fas fa-chart-line text-primary"></i> 
+            Flight Difficulty Dashboard
+        </h1>
+        <p class="lead text-muted">Real-time analysis of United Airlines flight operations and difficulty patterns</p>
+    </div>
+</div>
+
+<!-- Key Metrics -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title">Total Flights</h6>
+                        <h3 id="totalFlights" class="mb-0">-</h3>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-plane fa-2x"></i>
+                    </div>
+                </div>
+ </div>
+      </div>
+ </div>
+
+ <div class="col-md-3">
+       <div class="card bg-warning text-white">
+<div class="card-body">
+                        <div class="d-flex justify-content-between">
+                              <div>
+<h6 class="card-title">Avg Delay</h6>
+<h3 id="avgDelay" class="mb-0">-</h3>
+</div>
+<div class="align-self-center">
+<i class="fas fa-clock fa-2x"></i>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="col-md-3">
+<div class="card bg-danger text-white">
+<div class="card-body">
+<div class="d-flex justify-content-between">
+<div>
+<h6 class="card-title">Delayed %</h6>
+<h3 id="delayedPct" class="mb-0">-</h3>
+</div>
+<div class="align-self-center">
+<i class="fas fa-exclamation-triangle fa-2x"></i>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="col-md-3">
+<div class="card bg-success text-white">
+<div class="card-body">
+<div class="d-flex justify-content-between">
+<div>
+<h6 class="card-title">Avg Difficulty</h6>
+<h3 id="avgDifficulty" class="mb-0">-</h3>
+</div>
+<div class="align-self-center">
+<i class="fas fa-signal fa-2x"></i>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Charts Section -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-chart-pie text-primary"></i> 
+                    Flight Difficulty Distribution
+                </h5>
+            </div>
+            <div class="card-body">
+                <div id="classificationChart"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-map-marker-alt text-info"></i> 
+                    Most Difficult Destinations
+                </h5>
+            </div>
+            <div class="card-body">
+                <div id="destinationChart"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Time Analysis -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-clock text-warning"></i> 
+                    Difficulty Pattern by Time of Day
+                </h5>
+            </div>
+            <div class="card-body">
+                <div id="timeChart"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Data Tables -->
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-globe text-success"></i> 
+                    Destination Analysis
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped" id="destinationTable">
+                        <thead>
+                            <tr>
+                                <th>Destination</th>
+                                <th>Difficult Flights</th>
+                                <th>Avg Score</th>
+                                <th>Avg Delay</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Data will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-plane text-info"></i> 
+                    Fleet Analysis
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped" id="fleetTable">
+                        <thead>
+                            <tr>
+                                <th>Fleet Type</th>
+                                <th>Difficult Flights</th>
+                                <th>Avg Score</th>
+                                <th>Avg Passengers</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Data will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Auto-refresh indicator -->
+<div class="position-fixed bottom-0 end-0 p-3">
+    <div class="alert alert-info alert-dismissible fade show" role="alert">
+        <i class="fas fa-sync-alt"></i> 
+        <span id="lastUpdate">Dashboard auto-refreshes every 30 seconds</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+$(document).ready(function() {
+    // Load initial data
+    loadDashboardData();
+    
+    // Set up auto-refresh
+    setInterval(function() {
+        loadDashboardData();
+        updateLastRefreshTime();
+    }, 30000); // Refresh every 30 seconds
+});
+
+function updateLastRefreshTime() {
+    const now = new Date();
+    document.getElementById('lastUpdate').textContent = 
+        `Last updated: ${now.toLocaleTimeString()}`;
+}
+</script>
+{% endblock %}
