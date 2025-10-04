@@ -318,30 +318,30 @@ def show_time_analysis(data):
         fig.update_layout(xaxis_title="Hour of Day", yaxis_title="Number of Difficult Flights")
         st.plotly_chart(fig, use_container_width=True)
         
-        # Show the data table
-        st.subheader("Hourly Analysis Data")
-        hourly_analysis.columns = ['Hour', 'Difficult Flights', 'Avg Delay (min)']
-        hourly_analysis = hourly_analysis.round(2)
-        st.dataframe(hourly_analysis, use_container_width=True)
     else:
         st.error("No hourly data available to display")
+        return
+    
+    # Show the data table
+    st.subheader("Hourly Analysis Data")
+    hourly_analysis_display = hourly_analysis.copy()  # Keep original for charts
+    hourly_analysis_display.columns = ['Hour', 'Difficult Flights', 'Avg Delay (min)']
+    hourly_analysis_display = hourly_analysis_display.round(2)
+    st.dataframe(hourly_analysis_display, use_container_width=True)
     
     # Delay analysis by hour
     st.subheader("Average Delay by Hour of Day")
     
-    if len(hourly_analysis) > 0:
-        fig2 = px.line(
-            hourly_analysis,
-            x='departure_hour',
-            y='departure_delay_minutes',
-            title="Average Delay by Hour of Day",
-            labels={'departure_hour': 'Hour of Day', 'departure_delay_minutes': 'Average Delay (minutes)'},
-            markers=True
-        )
-        fig2.update_layout(xaxis_title="Hour of Day", yaxis_title="Average Delay (minutes)")
-        st.plotly_chart(fig2, use_container_width=True)
-    else:
-        st.error("No delay data available to display")
+    fig2 = px.line(
+        hourly_analysis,
+        x='departure_hour',
+        y='departure_delay_minutes',
+        title="Average Delay by Hour of Day",
+        labels={'departure_hour': 'Hour of Day', 'departure_delay_minutes': 'Average Delay (minutes)'},
+        markers=True
+    )
+    fig2.update_layout(xaxis_title="Hour of Day", yaxis_title="Average Delay (minutes)")
+    st.plotly_chart(fig2, use_container_width=True)
 
 def show_how_it_works(data):
     st.header("🔧 How It Works - Flight Difficulty Scoring System")

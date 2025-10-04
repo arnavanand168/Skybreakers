@@ -1,9 +1,62 @@
-# SkyHack 3.0 United Airlines Flight Difficulty Scoring System
+# Skybreakers - United Airlines Flight Difficulty Analysis
 
-## Overview
-This project implements a comprehensive flight difficulty scoring system for United Airlines to optimize flight operations and resource allocation. The system analyzes multiple operational complexity factors to classify flights into three categories: Difficult, Medium, and Easy.
+## 🚀 Quick Start
 
-## Project Structure
+### Prerequisites
+- Python 3.8+ 
+- All CSV data files present
+
+### 1. Install Dependencies
+```bash
+pip install -r requirements_fixed.txt
+```
+
+### 2. Generate Database
+The database file (`skyhack.db`) is not included due to GitHub's size limits. Regenerate it:
+
+```bash
+./regenerate_database.sh
+```
+
+### 3. Launch Dashboard
+```bash
+./launch_working_dashboard.sh
+```
+
+## 📊 Project Overview
+
+This project provides a comprehensive **Flight Difficulty Scoring System** for United Airlines operations optimization, featuring:
+- **Interactive Dashboard** with 6 analysis sections
+- **Advanced Machine Learning** models (XGBoost, LightGBM, Deep Learning)
+- **Reinforcement Learning** for dynamic resource allocation
+- **Real-time Analytics** for 8,155+ flights
+
+## 🎯 Dashboard Features
+
+- **📈 Overview Dashboard**: Key metrics and flight classifications
+- **🎯 Difficulty Analysis**: Factor correlation and complexity insights  
+- **🌍 Destination Analysis**: Route-specific difficulty patterns
+- **✈️ Fleet Analysis**: Aircraft type operational challenges
+- **⏰ Time Analysis**: Hourly difficulty and delay patterns
+- **🔧 How It Works**: Complete methodology explanation
+
+## 💰 Expected Impact
+
+- **$2-3M annual savings** through optimization
+- **20% reduction** in ground time delays
+- **15% improvement** in on-time performance
+- **30% improvement** in customer satisfaction
+
+## 🔧 Technical Stack
+
+- **Frontend**: Streamlit, Plotly
+- **ML/AI**: TensorFlow, XGBoost, LightGBM, Scikit-learn
+- **Data**: Pandas, NumPy, SQLite3
+- **Visualization**: Matplotlib, Seaborn
+
+## 📚 Original Analysis Details
+
+### Project Structure
 ```
 skyhack/
 ├── Airports Data.csv                    # Airport codes and country information
@@ -177,4 +230,3 @@ For questions about this analysis, please contact the development team.
 
 ---
 *Analysis completed for SkyHack 3.0 United Airlines Challenge*
-# Skybreakers
