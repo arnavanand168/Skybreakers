@@ -1,11 +1,4 @@
 #!/usr/bin/env python3
-"""
-United Airlines Flight Difficulty Scoring System
-Advanced Analytics Dashboard with ML, Deep Learning, and Reinforcement Learning
-
-Author: Arnav
-Date: 2024
-"""
 
 import pandas as pd
 import numpy as np
@@ -29,7 +22,6 @@ from tensorflow.keras.callbacks import EarlyStopping
 import warnings
 warnings.filterwarnings('ignore')
 
-# Page configuration
 st.set_page_config(
     page_title="United Airlines Flight Difficulty Dashboard",
     page_icon="✈️",
@@ -39,7 +31,6 @@ st.set_page_config(
 
 class FlightDifficultyAnalyzer:
     def __init__(self, db_path="skyhack.db"):
-        """Initialize the analyzer with database connection"""
         self.db_path = db_path
         self.conn = None
         self.data = None
@@ -47,7 +38,6 @@ class FlightDifficultyAnalyzer:
         self.scaler = StandardScaler()
         
     def connect_database(self):
-        """Connect to SQLite database"""
         try:
             self.conn = sqlite3.connect(self.db_path)
             st.success("✅ Database connected successfully!")
@@ -57,7 +47,6 @@ class FlightDifficultyAnalyzer:
             return False
     
     def load_data(self):
-        """Load data from database"""
         if not self.conn:
             return False
             
@@ -74,11 +63,9 @@ class FlightDifficultyAnalyzer:
             return False
     
     def prepare_features(self):
-        """Prepare features for machine learning"""
         if self.data is None:
             return None
             
-        # Select features for ML
         feature_columns = [
             'load_factor', 'ground_time_pressure', 'transfer_bag_ratio',
             'ssr_intensity', 'is_international', 'has_children', 'has_strollers',
@@ -86,10 +73,8 @@ class FlightDifficultyAnalyzer:
             'total_bags', 'children_count', 'lap_children_count'
         ]
         
-        # Handle missing values
         X = self.data[feature_columns].fillna(0)
         
-        # Create target variable
         y = self.data['difficulty_classification'].map({
             'Easy': 0, 'Medium': 1, 'Difficult': 2
         })
@@ -97,16 +82,12 @@ class FlightDifficultyAnalyzer:
         return X, y
     
     def train_ml_models(self, X, y):
-        """Train multiple machine learning models"""
         X_train, X_test, y_train, y_test = train_test_split(
             X, y, test_size=0.2, random_state=42, stratify=y
         )
         
-        # Scale features
         X_train_scaled = self.scaler.fit_transform(X_train)
         X_test_scaled = self.scaler.transform(X_test)
-        
-        # Train models
         models = {
             'Random Forest': RandomForestClassifier(n_estimators=100, random_state=42),
             'Gradient Boosting': GradientBoostingClassifier(random_state=42),
@@ -135,20 +116,15 @@ class FlightDifficultyAnalyzer:
         return results, X_test, y_test
     
     def build_deep_learning_model(self, X, y):
-        """Build and train deep learning neural network"""
         X_train, X_test, y_train, y_test = train_test_split(
             X, y, test_size=0.2, random_state=42, stratify=y
         )
         
-        # Scale features
         X_train_scaled = self.scaler.fit_transform(X_train)
         X_test_scaled = self.scaler.transform(X_test)
         
-        # Convert to categorical for multi-class classification
         y_train_cat = tf.keras.utils.to_categorical(y_train, 3)
         y_test_cat = tf.keras.utils.to_categorical(y_test, 3)
-        
-        # Build neural network
         model = Sequential([
             Dense(128, activation='relu', input_shape=(X_train_scaled.shape[1],)),
             BatchNormalization(),
@@ -171,7 +147,6 @@ class FlightDifficultyAnalyzer:
             metrics=['accuracy']
         )
         
-        # Train model
         early_stopping = EarlyStopping(
             monitor='val_loss', patience=10, restore_best_weights=True
         )
@@ -185,7 +160,6 @@ class FlightDifficultyAnalyzer:
             verbose=0
         )
         
-        # Evaluate
         y_pred_proba = model.predict(X_test_scaled)
         y_pred = np.argmax(y_pred_proba, axis=1)
         accuracy = accuracy_score(y_test, y_pred)
@@ -201,10 +175,8 @@ class FlightDifficultyAnalyzer:
         return model, history, accuracy
     
     def create_eda_dashboard(self):
-        """Create comprehensive EDA dashboard"""
         st.header("📊 Exploratory Data Analysis Dashboard")
         
-        # Key metrics
         col1, col2, col3, col4 = st.columns(4)
         
         with col1:
@@ -223,14 +195,12 @@ class FlightDifficultyAnalyzer:
             avg_transfer_ratio = self.data['transfer_bag_ratio'].mean()
             st.metric("Avg Transfer Ratio", f"{avg_transfer_ratio:.3f}")
         
-        # Visualizations
         tab1, tab2, tab3, tab4 = st.tabs(["Distribution Analysis", "Correlation Analysis", "Time Analysis", "Destination Analysis"])
         
         with tab1:
             col1, col2 = st.columns(2)
             
             with col1:
-                # Difficulty classification distribution
                 fig = px.pie(
                     self.data, 
                     names='difficulty_classification',
@@ -240,7 +210,6 @@ class FlightDifficultyAnalyzer:
                 st.plotly_chart(fig, use_container_width=True)
             
             with col2:
-                # Load factor distribution
                 fig = px.histogram(
                     self.data,
                     x='load_factor',
@@ -251,7 +220,6 @@ class FlightDifficultyAnalyzer:
                 st.plotly_chart(fig, use_container_width=True)
         
         with tab2:
-            # Correlation heatmap
             numeric_cols = ['load_factor', 'ground_time_pressure', 'transfer_bag_ratio', 
                            'ssr_intensity', 'difficulty_score']
             corr_matrix = self.data[numeric_cols].corr()
@@ -265,7 +233,6 @@ class FlightDifficultyAnalyzer:
             st.plotly_chart(fig, use_container_width=True)
         
         with tab3:
-            # Time-based analysis
             self.data['hour'] = pd.to_datetime(self.data['scheduled_departure_datetime_local']).dt.hour
             
             fig = px.box(
@@ -278,7 +245,6 @@ class FlightDifficultyAnalyzer:
             st.plotly_chart(fig, use_container_width=True)
         
         with tab4:
-            # Top difficult destinations
             top_destinations = self.data.groupby('scheduled_arrival_station_code').agg({
                 'difficulty_classification': lambda x: (x == 'Difficult').sum(),
                 'difficulty_score': 'mean'
@@ -293,7 +259,6 @@ class FlightDifficultyAnalyzer:
             st.plotly_chart(fig, use_container_width=True)
     
     def create_ml_dashboard(self):
-        """Create machine learning model dashboard"""
         st.header("🤖 Machine Learning Models Dashboard")
         
         if not self.data is not None:
@@ -304,11 +269,9 @@ class FlightDifficultyAnalyzer:
         if X is None:
             return
         
-        # Train models
         with st.spinner("Training machine learning models..."):
             ml_results, X_test, y_test = self.train_ml_models(X, y)
         
-        # Model performance comparison
         st.subheader("Model Performance Comparison")
         
         model_names = list(ml_results.keys())
@@ -322,7 +285,6 @@ class FlightDifficultyAnalyzer:
         )
         st.plotly_chart(fig, use_container_width=True)
         
-        # Detailed model analysis
         selected_model = st.selectbox("Select Model for Detailed Analysis", model_names)
         
         if selected_model:
@@ -331,7 +293,6 @@ class FlightDifficultyAnalyzer:
             col1, col2 = st.columns(2)
             
             with col1:
-                # Confusion Matrix
                 cm = confusion_matrix(model_data['y_test'], model_data['predictions'])
                 fig = px.imshow(
                     cm,
@@ -343,7 +304,6 @@ class FlightDifficultyAnalyzer:
                 st.plotly_chart(fig, use_container_width=True)
             
             with col2:
-                # Classification Report
                 report = classification_report(
                     model_data['y_test'], 
                     model_data['predictions'],
@@ -351,12 +311,10 @@ class FlightDifficultyAnalyzer:
                     output_dict=True
                 )
                 
-                # Convert to DataFrame for better display
                 report_df = pd.DataFrame(report).transpose()
                 st.dataframe(report_df.round(3))
     
     def create_deep_learning_dashboard(self):
-        """Create deep learning dashboard"""
         st.header("🧠 Deep Learning Neural Network Dashboard")
         
         if self.data is None:
@@ -367,11 +325,9 @@ class FlightDifficultyAnalyzer:
         if X is None:
             return
         
-        # Train deep learning model
         with st.spinner("Training deep learning model..."):
             model, history, accuracy = self.build_deep_learning_model(X, y)
         
-        # Model architecture
         st.subheader("Neural Network Architecture")
         st.text("""
         Input Layer: 13 features
@@ -381,11 +337,9 @@ class FlightDifficultyAnalyzer:
         Output Layer: 3 neurons (Easy/Medium/Difficult)
         """)
         
-        # Training history
         col1, col2 = st.columns(2)
         
         with col1:
-            # Accuracy plot
             fig = go.Figure()
             fig.add_trace(go.Scatter(
                 y=history.history['accuracy'],
@@ -405,7 +359,6 @@ class FlightDifficultyAnalyzer:
             st.plotly_chart(fig, use_container_width=True)
         
         with col2:
-            # Loss plot
             fig = go.Figure()
             fig.add_trace(go.Scatter(
                 y=history.history['loss'],
@@ -424,16 +377,13 @@ class FlightDifficultyAnalyzer:
             )
             st.plotly_chart(fig, use_container_width=True)
         
-        # Model performance
         st.metric("Deep Learning Model Accuracy", f"{accuracy:.3f}")
     
     def create_reinforcement_learning_dashboard(self):
-        """Create reinforcement learning dashboard for resource allocation"""
         st.header("🎯 Reinforcement Learning Resource Allocation Dashboard")
         
         st.subheader("Dynamic Resource Allocation Agent")
         
-        # Simplified RL environment simulation
         st.info("""
         **Reinforcement Learning Agent Overview:**
         
@@ -448,7 +398,6 @@ class FlightDifficultyAnalyzer:
         - Optimization for multiple objectives (time, cost, satisfaction)
         """)
         
-        # Simulate RL agent performance
         col1, col2, col3 = st.columns(3)
         
         with col1:
@@ -460,13 +409,10 @@ class FlightDifficultyAnalyzer:
         with col3:
             st.metric("Cost Reduction", "-18.5%")
         
-        # RL Agent Decision Tree Visualization
         st.subheader("RL Agent Decision Tree")
         
-        # Create a simplified decision tree visualization
         fig = go.Figure()
         
-        # Add nodes
         fig.add_trace(go.Scatter(
             x=[0, -1, 1, -1.5, -0.5, 0.5, 1.5],
             y=[0, -1, -1, -2, -2, -2, -2],
@@ -476,7 +422,6 @@ class FlightDifficultyAnalyzer:
             textposition="middle center"
         ))
         
-        # Add edges
         fig.add_trace(go.Scatter(
             x=[0, -1, 0, 1, -1, -1.5, -1, -0.5, 1, 0.5, 1, 1.5],
             y=[0, -1, 0, -1, -1, -2, -1, -2, -1, -2, -1, -2],
@@ -495,10 +440,8 @@ class FlightDifficultyAnalyzer:
         
         st.plotly_chart(fig, use_container_width=True)
         
-        # RL Performance Metrics
         st.subheader("RL Agent Performance Metrics")
         
-        # Simulate learning curve
         episodes = np.arange(1, 101)
         reward = 100 * (1 - np.exp(-episodes/20)) + np.random.normal(0, 5, 100)
         
@@ -511,14 +454,11 @@ class FlightDifficultyAnalyzer:
         st.plotly_chart(fig, use_container_width=True)
     
     def create_real_time_monitoring(self):
-        """Create real-time flight monitoring dashboard"""
         st.header("📡 Real-Time Flight Monitoring Dashboard")
         
-        # Simulate real-time data
         np.random.seed(42)
         n_flights = 20
         
-        # Generate sample real-time data
         flight_data = {
             'Flight': [f'UA{i:04d}' for i in range(1001, 1001+n_flights)],
             'Destination': np.random.choice(['LAX', 'JFK', 'SFO', 'ORD', 'DFW'], n_flights),
@@ -530,7 +470,6 @@ class FlightDifficultyAnalyzer:
         
         df_realtime = pd.DataFrame(flight_data)
         
-        # Current status overview
         col1, col2, col3, col4 = st.columns(4)
         
         with col1:
@@ -549,25 +488,21 @@ class FlightDifficultyAnalyzer:
             avg_difficulty = df_realtime['Difficulty Score'].mean()
             st.metric("Avg Difficulty Score", f"{avg_difficulty:.3f}")
         
-        # Real-time flight status table
         st.subheader("Current Flight Status")
         
-        # Color code the difficulty scores
         def color_difficulty(val):
             if val > 0.7:
-                return 'background-color: #ffcccc'  # Red for high difficulty
+                return 'background-color: #ffcccc'
             elif val > 0.4:
-                return 'background-color: #fff2cc'  # Yellow for medium difficulty
+                return 'background-color: #fff2cc'
             else:
-                return 'background-color: #ccffcc'  # Green for low difficulty
+                return 'background-color: #ccffcc'
         
         styled_df = df_realtime.style.applymap(color_difficulty, subset=['Difficulty Score'])
         st.dataframe(styled_df, use_container_width=True)
         
-        # Real-time alerts
         st.subheader("🚨 Real-Time Alerts")
         
-        # Generate alerts based on data
         alerts = []
         for _, row in df_realtime.iterrows():
             if row['Difficulty Score'] > 0.8:
@@ -578,35 +513,29 @@ class FlightDifficultyAnalyzer:
                 alerts.append(f"⏰ Delay alert for {row['Flight']}")
         
         if alerts:
-            for alert in alerts[:5]:  # Show top 5 alerts
+            for alert in alerts[:5]:
                 st.warning(alert)
         else:
             st.success("✅ No critical alerts at this time")
     
     def run_dashboard(self):
-        """Main dashboard runner"""
         st.title("✈️ United Airlines Flight Difficulty Scoring System")
         st.markdown("**Advanced Analytics Dashboard with ML, Deep Learning & Reinforcement Learning**")
         
-        # Sidebar
         st.sidebar.title("Navigation")
         
-        # Initialize analyzer
         if 'analyzer' not in st.session_state:
             st.session_state.analyzer = FlightDifficultyAnalyzer()
         
         analyzer = st.session_state.analyzer
         
-        # Connect to database
         if st.sidebar.button("Connect to Database"):
             analyzer.connect_database()
         
-        # Load data
         if st.sidebar.button("Load Flight Data"):
             if analyzer.connect_database():
                 analyzer.load_data()
         
-        # Navigation
         page = st.sidebar.selectbox(
             "Select Dashboard",
             [
@@ -618,7 +547,6 @@ class FlightDifficultyAnalyzer:
             ]
         )
         
-        # Display selected page
         if analyzer.data is not None:
             if page == "📊 EDA Dashboard":
                 analyzer.create_eda_dashboard()
@@ -633,7 +561,6 @@ class FlightDifficultyAnalyzer:
         else:
             st.warning("⚠️ Please connect to database and load data first!")
             
-            # Show sample data structure
             st.subheader("Expected Data Structure")
             st.code("""
             Required columns:
