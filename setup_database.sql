@@ -1,11 +1,6 @@
--- SkyHack 3.0 United Airlines Database Setup
--- This script creates tables and imports CSV data
-
--- Enable CSV import mode
 .mode csv
 .headers on
 
--- Create and import Airports table
 CREATE TABLE Airports (
     airport_iata_code TEXT PRIMARY KEY,
     iso_country_code TEXT
@@ -13,7 +8,6 @@ CREATE TABLE Airports (
 
 .import "Airports Data.csv" Airports
 
--- Create and import Flights table (main flight data)
 CREATE TABLE Flights (
     company_id TEXT,
     flight_number TEXT,
@@ -34,7 +28,6 @@ CREATE TABLE Flights (
 
 .import "Flight Level Data.csv" Flights
 
--- Create and import Bags table
 CREATE TABLE Bags (
     company_id TEXT,
     flight_number TEXT,
@@ -48,7 +41,6 @@ CREATE TABLE Bags (
 
 .import "Bag+Level+Data.csv" Bags
 
--- Create and import Passengers table
 CREATE TABLE Passengers (
     company_id TEXT,
     flight_number TEXT,
@@ -66,7 +58,6 @@ CREATE TABLE Passengers (
 
 .import "PNR+Flight+Level+Data.csv" Passengers
 
--- Create and import Remarks table
 CREATE TABLE Remarks (
     record_locator TEXT,
     pnr_creation_date TEXT,
@@ -76,14 +67,12 @@ CREATE TABLE Remarks (
 
 .import "PNR Remark Level Data.csv" Remarks
 
--- Create indexes for better performance
 CREATE INDEX idx_flights_key ON Flights(company_id, flight_number, scheduled_departure_date_local);
 CREATE INDEX idx_bags_key ON Bags(company_id, flight_number, scheduled_departure_date_local);
 CREATE INDEX idx_passengers_key ON Passengers(company_id, flight_number, scheduled_departure_date_local);
 CREATE INDEX idx_remarks_flight ON Remarks(flight_number);
 CREATE INDEX idx_remarks_pnr ON Remarks(record_locator);
 
--- Display table counts
 SELECT 'Airports' as table_name, COUNT(*) as row_count FROM Airports
 UNION ALL
 SELECT 'Flights', COUNT(*) FROM Flights

@@ -1,25 +1,19 @@
-#!/usr/bin/env python3
-"""
-Quick test for demo Flask app
-"""
+
 
 from app_demo import analyzer
 
 def test_demo_functionality():
-    """Test the demo analyzer functionality"""
+
     print("🧪 Testing Demo Flight Analyzer...")
-    
-    # Test data generation
+
     print("📊 Testing data generation...")
     df = analyzer.load_flight_data()
     print(f"✅ Generated {len(df)} flights")
-    
-    # Test stats
+
     print("📈 Testing statistics...")
     stats = analyzer.get_dashboard_stats()
     print(f"✅ Stats: {stats}")
-    
-    # Test charts
+
     print("📊 Testing chart generation...")
     
     try:
@@ -39,8 +33,7 @@ def test_demo_functionality():
         print("✅ Time chart created")
     except Exception as e:
         print(f"❌ Time chart error: {e}")
-    
-    # Test analysis data
+
     try:
         dest_data = analyzer.get_destination_analysis()
         print(f"✅ Destination analysis: {len(dest_data)} destinations")

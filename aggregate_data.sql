@@ -1,7 +1,3 @@
--- Phase 1: Data Foundation and Consolidation
--- Pre-process and Aggregate Many-to-One Tables
-
--- 1. Summarize Bag Data: Count total_bags and transfer_bags for each unique flight
 CREATE TABLE BagSummary AS
 SELECT 
     company_id,
@@ -16,7 +12,6 @@ FROM Bags
 GROUP BY company_id, flight_number, scheduled_departure_date_local, 
          scheduled_departure_station_code, scheduled_arrival_station_code;
 
--- 2. Summarize Passenger Data: Sum total_passengers and count children/lap children for each unique flight
 CREATE TABLE PassengerSummary AS
 SELECT 
     company_id,

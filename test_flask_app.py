@@ -1,8 +1,4 @@
-#!/usr/bin/env python3
-"""
-Test script for Flask Flight Difficulty Dashboard
-Tests all API endpoints and functionality
-"""
+
 
 import requests
 import json
@@ -10,7 +6,7 @@ import sys
 from app import app, analyzer
 
 def test_database():
-    """Test database connection and data loading"""
+
     print("🔄 Testing database connection...")
     
     try:
@@ -28,7 +24,7 @@ def test_database():
         return False
 
 def test_api_endpoints():
-    """Test all API endpoints"""
+
     print("\n🌐 Testing API endpoints...")
     
     base_url = 'http://localhost:5000'
@@ -72,7 +68,7 @@ def test_api_endpoints():
     return success_count == total_count
 
 def test_static_files():
-    """Test static file serving"""
+
     print("\n📁 Testing static file serving...")
     
     static_files = [
@@ -99,7 +95,7 @@ def test_static_files():
     return all(results.values())
 
 def test_templates():
-    """Test template rendering"""
+
     print("\n🎨 Testing template rendering...")
     
     pages = [
@@ -131,20 +127,18 @@ def test_templates():
     return all(results.values())
 
 def run_server_tests():
-    """Run tests with Flask test client"""
+
     print("\n🧪 Running server-side tests...")
     
     test_client = app.test_client()
     results = {}
-    
-    # Test main pages
+
     response = test_client.get('/')
     results['homepage'] = response.status_code == 200
     
     response = test_client.get('/about')
     results['about_page'] = response.status_code == 200
-    
-    # Test API endpoints
+
     response = test_client.get('/api/health')
     results['health_api'] = response.status_code == 200
     
@@ -159,14 +153,12 @@ def run_server_tests():
     return all(results.values())
 
 def main():
-    """Main test function"""
+
     print("🚀 United Airlines Flight Difficulty Dashboard - Test Suite")
     print("=" * 60)
-    
-    # Test database
+
     db_ok = test_database()
-    
-    # Test server-side functionality
+
     server_ok = run_server_tests()
     
     print("\n📋 Test Summary:")

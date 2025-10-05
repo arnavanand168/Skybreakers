@@ -212,43 +212,36 @@ async def about(request: Request):
 
 @app.get("/api/stats")
 async def get_stats():
-    """API endpoint for dashboard statistics"""
     stats = analyzer.get_dashboard_stats()
     return stats
 
 @app.get("/api/classification-chart")
 async def get_classification_chart():
-    """API endpoint for classification pie chart"""
     chart_json = analyzer.create_classification_chart()
     return JSONResponse(content={"chart": json.loads(chart_json)})
 
 @app.get("/api/destination-chart")
 async def get_destination_chart():
-    """API endpoint for destination bar chart"""
     chart_json = analyzer.create_destination_chart()
     return JSONResponse(content={"chart": json.loads(chart_json)})
 
 @app.get("/api/time-chart")
 async def get_time_chart():
-    """API endpoint for time analysis line chart"""
     chart_json = analyzer.create_time_chart()
     return JSONResponse(content={"chart": json.loads(chart_json)})
 
 @app.get("/api/destinations")
 async def get_destinations():
-    """API endpoint for destination data"""
     dest_data = analyzer.get_destination_analysis()
     return dest_data.to_dict('records')
 
 @app.get("/api/fleet")
 async def get_fleet():
-    """API endpoint for fleet data"""
     fleet_data = analyzer.get_fleet_analysis()
     return fleet_data.to_dict('records')
 
 @app.get("/api/health")
 async def health_check():
-    """Health check endpoint for deployment"""
     return {
         'status': 'healthy',
         'timestamp': datetime.now().isoformat(),

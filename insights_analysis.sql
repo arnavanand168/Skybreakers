@@ -1,7 +1,5 @@
--- Phase 4: Insight Generation and Final Submission
--- Analyze results and generate business insights
 
--- 1. Top 10 destinations that most frequently appear in "Difficult" category
+
 SELECT 
     scheduled_arrival_station_code as destination,
     COUNT(*) as difficult_flight_count,
@@ -18,8 +16,6 @@ GROUP BY scheduled_arrival_station_code
 ORDER BY difficult_flight_count DESC
 LIMIT 10;
 
--- 2. Root cause analysis for top difficult destinations
--- Let's examine the specific factors driving difficulty for the top destinations
 SELECT 
     'Top Difficult Destinations Analysis' as analysis_type,
     scheduled_arrival_station_code as destination,
@@ -42,7 +38,6 @@ WHERE scheduled_arrival_station_code IN (
 GROUP BY scheduled_arrival_station_code
 ORDER BY difficult_flights DESC;
 
--- 3. Fleet type analysis for difficult flights
 SELECT 
     fleet_type,
     COUNT(*) as total_flights,
@@ -53,7 +48,6 @@ FROM ClassifiedFlights
 GROUP BY fleet_type
 ORDER BY difficult_percentage DESC;
 
--- 4. Time of day analysis for difficult flights
 SELECT 
     CASE 
         WHEN CAST(strftime('%H', scheduled_departure_datetime_local) AS INTEGER) BETWEEN 5 AND 7 THEN 'Early Morning (5-7)'
@@ -71,7 +65,6 @@ FROM ClassifiedFlights
 GROUP BY time_period
 ORDER BY difficult_percentage DESC;
 
--- 5. Carrier analysis
 SELECT 
     carrier,
     COUNT(*) as total_flights,
