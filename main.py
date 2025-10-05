@@ -49,7 +49,6 @@ class FastAPIFlightAnalyzer:
                 difficulty_score = np.random.uniform(0.0, 0.6)
                 classification = np.random.choice(['Easy', 'Medium'], p=[0.6, 0.4])
             
-            # Destination-based patterns
             dest = np.random.choice(destinations)
             if dest in ['YUL', 'YYZ', 'LHR']:
                 difficulty_score += 0.2
@@ -201,17 +200,14 @@ class FastAPIFlightAnalyzer:
         
         return json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
 
-# Initialize analyzer
 analyzer = FastAPIFlightAnalyzer()
 
 @app.get("/", response_class=HTMLResponse)
 async def dashboard(request: Request):
-    """Main dashboard page"""
     return templates.TemplateResponse("fastapi_dashboard.html", {"request": request})
 
 @app.get("/about", response_class=HTMLResponse)
 async def about(request: Request):
-    """About page"""
     return templates.TemplateResponse("about.html", {"request": request})
 
 @app.get("/api/stats")
