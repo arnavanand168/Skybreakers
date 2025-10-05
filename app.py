@@ -11,7 +11,6 @@ import numpy as np
 app = Flask(__name__)
 app.secret_key = 'your-secret-key-change-this'
 
-# Database configuration
 DATABASE_PATH = 'skyhack.db'
 
 class FlightAnalyzer:
@@ -19,13 +18,11 @@ class FlightAnalyzer:
         self.conn = None
         
     def get_connection(self):
-        """Get database connection"""
         if not self.conn:
             self.conn = sqlite3.connect(DATABASE_PATH)
         return self.conn
     
     def load_flight_data(self):
-        """Load flight data from database"""
         conn = self.get_connection()
         query = """
         SELECT 
@@ -46,23 +43,26 @@ class FlightAnalyzer:
             return None
     
     def get_dashboard_stats(self):
-        """Get key dashboard statistics"""
-        df = self.load_flight_data()
-        if df is None:
+        try:
+            df = self.load_flight_data()
+            if df is None:
+                print("No data loaded from database")
+                return None
+                
+            stats = {
+                'total_flights': len(df),
+                'avg_delay': round(df['departure_delay_minutes'].mean(), 2),
+                'delayed_pct': round((df['is_delayed'] == 1).mean() * 100, 2),
+                'avg_difficulty': round(df['difficulty_score'].mean(), 3),
+                'difficulty_distribution': df['difficulty_classification'].value_counts().to_dict()
+            }
+            print(f"Stats calculated successfully: {stats}")
+            return stats
+        except Exception as e:
+            print(f"Error in get_dashboard_stats: {e}")
             return None
-            
-        stats = {
-            'total_flights': len(df),
-            'avg_delay': round(df['departure_delay_minutes'].mean(), 2),
-            'delayed_pct': round((df['is_delayed'] == 1).mean() * 100, 2),
-            'avg_difficulty': round(df['difficulty_score'].mean(), 3),
-            'difficulty_distribution': df['difficulty_classification'].value_counts().to_dict()
-        }
-        return stats
     
-    # Analysis methods for different dashboard sections
     def get_destination_analysis(self):
-        """Get destination analysis data"""
         df = self.load_flight_data()
         if df is None:
             return None
@@ -76,7 +76,6 @@ class FlightAnalyzer:
         return dest_analysis.reset_index()
     
     def get_fleet_analysis(self):
-        """Get fleet analysis data"""
         df = self.load_flight_data()
         if df is None:
             return None
@@ -90,12 +89,10 @@ class FlightAnalyzer:
         return fleet_analysis.reset_index()
     
     def get_time_analysis(self):
-        """Get time analysis data"""
         df = self.load_flight_data()
         if df is None:
             return None
             
-        # Parse datetime and extract hour
         try:
             df['departure_hour'] = pd.to_datetime(df['scheduled_departure_datetime_local'], errors='coerce').dt.hour
             df = df.dropna(subset=['departure_hour'])
@@ -110,18 +107,17 @@ class FlightAnalyzer:
         return time_analysis
     
     def create_classification_chart(self):
-        """Create flight classification pie chart"""
         df = self.load_flight_data()
         if df is None:
             return None
             
         classification_counts = df['difficulty_classification'].value_counts()
         
-        colors = ['#2E8B57', '#FFD700', '#DC143C']  # Easy, Medium, Difficult
+        colors = ['#2E8B57', '#FFD700', '#DC143C']
         
         fig = go.Figure(data=[go.Pie(
-            labels=classification_counts.index,
-            values=classification_counts.values,
+            labels=classification_counts.index.tolist(),
+            values=classification_counts.values.tolist(),
             marker_colors=colors
         )])
         
@@ -130,80 +126,84 @@ class FlightAnalyzer:
             showlegend=True
         )
         
-        return json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+        return json.dumps(fig.to_dict(), cls=plotly.utils.PlotlyJSONEncoder)
     
     def create_destination_chart(self):
-        """Create destination difficulty chart"""
         dest_data = self.get_destination_analysis()
         if dest_data is None:
             return None
             
-        fig = go.Figure(data=[go.Bar(
-            x=dest_data['scheduled_arrival_station_code'][:10],
-            y=dest_data['difficulty_classification'][:10],
-            marker_color='lightblue'
-        )])
+        fig = go.Figure()
+        fig.add_trace(go.Bar(
+            x=dest_data['scheduled_arrival_station_code'][:10].tolist(),
+            y=dest_data['difficulty_classification'][:10].tolist(),
+            marker_color='lightblue',
+            name='Difficult Flights'
+        ))
         
         fig.update_layout(
             title="Top 10 Most Difficult Destinations",
             xaxis_title="Destination",
-            yaxis_title="Number of Difficult Flights"
+            yaxis_title="Number of Difficult Flights",
+            showlegend=False,
+            height=400
         )
         
-        return json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+        return json.dumps(fig.to_dict(), cls=plotly.utils.PlotlyJSONEncoder)
     
     def create_time_chart(self):
-        """Create time analysis chart"""
         time_data = self.get_time_analysis()
         if time_data is None:
             return None
             
         fig = go.Figure()
         fig.add_trace(go.Scatter(
-            x=time_data['departure_hour'],
-            y=time_data['difficulty_classification'],
+            x=time_data['departure_hour'].tolist(),
+            y=time_data['difficulty_classification'].tolist(),
             mode='lines+markers',
             name='Difficult Flights',
-            line=dict(color='red')
+            line=dict(color='red'),
+            marker=dict(color='red', size=6)
         ))
         
         fig.update_layout(
             title="Difficult Flights by Hour of Day",
             xaxis_title="Hour of Day",
-            yaxis_title="Number of Difficult Flights"
+            yaxis_title="Number of Difficult Flights",
+            showlegend=False,
+            height=400
         )
         
-        return json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+        return json.dumps(fig.to_dict(), cls=plotly.utils.PlotlyJSONEncoder)
 
-# Initialize analyzer
 analyzer = FlightAnalyzer()
 
 @app.route('/')
 def dashboard():
-    """Main dashboard page"""
     return render_template('dashboard.html')
 
 @app.route('/api/stats')
 def get_stats():
-    """API endpoint for dashboard statistics"""
-    stats = analyzer.get_dashboard_stats()
-    if stats:
-        return jsonify(stats)
-    else:
-        return jsonify({'error': 'Unable to load data'}), 500
+    try:
+        stats = analyzer.get_dashboard_stats()
+        if stats:
+            return jsonify(stats)
+        else:
+            return jsonify({'error': 'Unable to load data'}), 500
+    except Exception as e:
+        print(f"Error in get_stats: {e}")
+        return jsonify({'error': f'Server error: {str(e)}'}), 500
 
 @app.route('/api/classification-chart')
 def get_classification_chart():
-    """API endpoint for classification pie chart"""
     chart_json = analyzer.create_classification_chart()
     if chart_json:
         return chart_json
     else:
-        return jsonify({'error': '无法生成图表'}), 500
+        return jsonify({'error': 'Unable to generate chart'}), 500
 
 @app.route('/api/destination-chart')
 def get_destination_chart():
-    """API endpoint for destination bar chart"""
     chart_json = analyzer.create_destination_chart()
     if chart_json:
         return chart_json
@@ -212,7 +212,6 @@ def get_destination_chart():
 
 @app.route('/api/time-chart')
 def get_time_chart():
-    """API endpoint for time analysis line chart"""
     chart_json = analyzer.create_time_chart()
     if chart_json:
         return chart_json
@@ -221,7 +220,6 @@ def get_time_chart():
 
 @app.route('/api/destinations')
 def get_destinations():
-    """API endpoint for destination data"""
     dest_data = analyzer.get_destination_analysis()
     if dest_data is not None:
         return jsonify(dest_data.to_dict('records'))
@@ -230,7 +228,6 @@ def get_destinations():
 
 @app.route('/api/fleet')
 def get_fleet():
-    """API endpoint for fleet data"""
     fleet_data = analyzer.get_fleet_analysis()
     if fleet_data is not None:
         return jsonify(fleet_data.to_dict('records'))
@@ -239,12 +236,10 @@ def get_fleet():
 
 @app.route('/about')
 def about():
-    """About page"""
     return render_template('about.html')
 
 @app.route('/api/health')
 def health_check():
-    """Health check endpoint for deployment"""
     return jsonify({
         'status': 'healthy',
         'timestamp': datetime.now().isoformat(),
@@ -252,4 +247,4 @@ def health_check():
     })
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=True, host='0.0.0.0', port=8000)

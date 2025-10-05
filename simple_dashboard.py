@@ -1,8 +1,4 @@
 #!/usr/bin/env python3
-"""
-Simplified United Airlines Flight Difficulty Dashboard
-Fixed version that loads data properly
-"""
 
 import streamlit as st
 import pandas as pd
@@ -11,7 +7,6 @@ import plotly.express as px
 import plotly.graph_objects as go
 import numpy as np
 
-# Page configuration
 st.set_page_config(
     page_title="United Airlines Flight Difficulty Dashboard",
     page_icon="✈️",
@@ -21,7 +16,6 @@ st.set_page_config(
 
 @st.cache_data
 def load_data():
-    """Load data from database with caching"""
     try:
         conn = sqlite3.connect('skyhack.db')
         query = """

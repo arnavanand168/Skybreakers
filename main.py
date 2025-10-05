@@ -11,28 +11,23 @@ from datetime import datetime, timedelta
 import numpy as np
 from typing import Dict, List
 
-# Initialize FastAPI app
 app = FastAPI(
     title="United Airlines Flight Difficulty Dashboard",
     description="Real-time analysis of United Airlines flight operations and difficulty patterns",
     version="1.0.0"
 )
 
-# Mount static files
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-# Setup templates
 templates = Jinja2Templates(directory="templates")
 
 class FastAPIFlightAnalyzer:
-    """FastAPI compatible analyzer with sample data for deployment"""
     
     def __init__(self):
         self.flight_data = self.generate_sample_data()
         
     def generate_sample_data(self):
-        """Generate realistic sample data for demo purposes"""
-        np.random.seed(42)  # For consistent results
+        np.random.seed(42)
         
         n_flights = 8155
         destinations = ['LAX', 'SFO', 'YUL', 'YYZ', 'LHR', 'STL', 'YOW', 'DEN', 'SEA', 'ATL', 'ORD', 'JFK']
@@ -43,7 +38,6 @@ class FastAPIFlightAnalyzer:
             hour = np.random.randint(6, 23)
             month_day = np.random.randint(1, 31)
             
-            # Difficulty patterns
             is_difficult = np.random.choice([0, 1], p=[0.3, 0.7])
             if np.random.random() < 0.1:
                 is_difficult = 1
