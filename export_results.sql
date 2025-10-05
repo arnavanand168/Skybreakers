@@ -1,10 +1,9 @@
--- Export final results to CSV
+
 .headers on
 .mode csv
 
--- Export the final classified flights table
 .output test_arnav.csv
-SELECT 
+SELECT
     company_id,
     flight_number,
     scheduled_departure_date_local,

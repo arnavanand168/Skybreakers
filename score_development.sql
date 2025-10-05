@@ -1,7 +1,7 @@
 
 
 CREATE TABLE FeatureStats AS
-SELECT 
+SELECT
     MIN(load_factor) as min_load_factor,
     MAX(load_factor) as max_load_factor,
     MIN(ground_time_pressure) as min_ground_time_pressure,
@@ -14,28 +14,28 @@ FROM MasterTableWithFeatures
 WHERE total_seats > 0 AND total_bags > 0 AND total_passengers > 0;
 
 CREATE TABLE FlightDifficultyScores AS
-SELECT 
+SELECT
     *,
 
-    CASE 
+    CASE
         WHEN fs.max_load_factor - fs.min_load_factor > 0
         THEN (load_factor - fs.min_load_factor) / (fs.max_load_factor - fs.min_load_factor)
         ELSE 0
     END as normalized_load_factor,
-    
-    CASE 
+
+    CASE
         WHEN fs.max_ground_time_pressure - fs.min_ground_time_pressure > 0
         THEN (ground_time_pressure - fs.min_ground_time_pressure) / (fs.max_ground_time_pressure - fs.min_ground_time_pressure)
         ELSE 0
     END as normalized_ground_time_pressure,
-    
-    CASE 
+
+    CASE
         WHEN fs.max_transfer_bag_ratio - fs.min_transfer_bag_ratio > 0
         THEN (transfer_bag_ratio - fs.min_transfer_bag_ratio) / (fs.max_transfer_bag_ratio - fs.min_transfer_bag_ratio)
         ELSE 0
     END as normalized_transfer_bag_ratio,
-    
-    CASE 
+
+    CASE
         WHEN fs.max_ssr_intensity - fs.min_ssr_intensity > 0
         THEN (ssr_intensity - fs.min_ssr_intensity) / (fs.max_ssr_intensity - fs.min_ssr_intensity)
         ELSE 0
@@ -53,7 +53,7 @@ FROM MasterTableWithFeatures mt
 CROSS JOIN FeatureStats fs;
 
 CREATE TABLE FinalFlightScores AS
-SELECT 
+SELECT
     *,
 
     (normalized_ground_time_pressure * 0.25 +
@@ -67,24 +67,24 @@ SELECT
 FROM FlightDifficultyScores;
 
 CREATE TABLE ClassifiedFlights AS
-SELECT 
+SELECT
     *,
 
     ROW_NUMBER() OVER (
-        PARTITION BY scheduled_departure_date_local 
+        PARTITION BY scheduled_departure_date_local
         ORDER BY difficulty_score DESC
     ) as daily_rank,
 
     COUNT(*) OVER (PARTITION BY scheduled_departure_date_local) as daily_flight_count,
 
-    CASE 
+    CASE
         WHEN ROW_NUMBER() OVER (
-            PARTITION BY scheduled_departure_date_local 
+            PARTITION BY scheduled_departure_date_local
             ORDER BY difficulty_score DESC
         ) <= COUNT(*) OVER (PARTITION BY scheduled_departure_date_local) * 0.20
         THEN 'Difficult'
         WHEN ROW_NUMBER() OVER (
-            PARTITION BY scheduled_departure_date_local 
+            PARTITION BY scheduled_departure_date_local
             ORDER BY difficulty_score DESC
         ) <= COUNT(*) OVER (PARTITION BY scheduled_departure_date_local) * 0.50
         THEN 'Medium'
@@ -93,7 +93,7 @@ SELECT
 
 FROM FinalFlightScores;
 
-SELECT 
+SELECT
     difficulty_classification,
     COUNT(*) as flight_count,
     ROUND(COUNT(*) * 100.0 / (SELECT COUNT(*) FROM ClassifiedFlights), 2) as percentage,

@@ -1,27 +1,23 @@
-#!/usr/bin/env python3
-"""
-United Airlines Flight Difficulty Dashboard Launcher
-Simple script to launch the Streamlit dashboard
-"""
+
 
 import subprocess
 import sys
 import os
 
 def check_requirements():
-    """Check if required packages are installed"""
+
     required_packages = [
-        'streamlit', 'pandas', 'numpy', 'plotly', 
+        'streamlit', 'pandas', 'numpy', 'plotly',
         'seaborn', 'matplotlib', 'scikit-learn', 'tensorflow'
     ]
-    
+
     missing_packages = []
     for package in required_packages:
         try:
             __import__(package)
         except ImportError:
             missing_packages.append(package)
-    
+
     if missing_packages:
         print("❌ Missing required packages:")
         for package in missing_packages:
@@ -29,11 +25,11 @@ def check_requirements():
         print("\n📦 Install missing packages with:")
         print("   pip install -r requirements_advanced.txt")
         return False
-    
+
     return True
 
 def check_database():
-    """Check if database file exists"""
+
     if not os.path.exists("skyhack.db"):
         print("❌ Database file 'skyhack.db' not found!")
         print("   Please ensure the database file is in the current directory.")
@@ -41,28 +37,26 @@ def check_database():
     return True
 
 def launch_dashboard():
-    """Launch the Streamlit dashboard"""
+
     print("🚀 Launching United Airlines Flight Difficulty Dashboard...")
     print("=" * 60)
-    
-    # Check requirements
+
     if not check_requirements():
         return False
-    
-    # Check database
+
     if not check_database():
         return False
-    
+
     print("✅ All requirements satisfied!")
     print("🌐 Dashboard will open in your default browser...")
     print("📊 Navigate through different sections using the sidebar")
     print("🔄 Refresh the page if needed")
     print("\n" + "=" * 60)
-    
+
     try:
-        # Launch Streamlit dashboard
+
         subprocess.run([
-            sys.executable, "-m", "streamlit", "run", 
+            sys.executable, "-m", "streamlit", "run",
             "flight_difficulty_dashboard.py",
             "--server.port", "8501",
             "--server.address", "localhost"
@@ -72,14 +66,14 @@ def launch_dashboard():
     except Exception as e:
         print(f"❌ Error launching dashboard: {e}")
         return False
-    
+
     return True
 
 def run_analysis():
-    """Run the comprehensive analysis"""
+
     print("🔬 Running Comprehensive Analysis...")
     print("=" * 60)
-    
+
     try:
         subprocess.run([sys.executable, "comprehensive_analysis.py"])
     except KeyboardInterrupt:
@@ -87,15 +81,15 @@ def run_analysis():
     except Exception as e:
         print(f"❌ Error running analysis: {e}")
         return False
-    
+
     return True
 
 def main():
-    """Main launcher function"""
+
     print("✈️ United Airlines Flight Difficulty Scoring System")
     print("Advanced Analytics Dashboard with ML, Deep Learning & RL")
     print("=" * 60)
-    
+
     while True:
         print("\n📋 Choose an option:")
         print("1. 🚀 Launch Interactive Dashboard")
@@ -103,9 +97,9 @@ def main():
         print("3. 📊 View Available Files")
         print("4. ❓ Help & Documentation")
         print("5. 🚪 Exit")
-        
+
         choice = input("\nEnter your choice (1-5): ").strip()
-        
+
         if choice == "1":
             launch_dashboard()
         elif choice == "2":
@@ -121,10 +115,10 @@ def main():
             print("❌ Invalid choice. Please enter 1-5.")
 
 def show_files():
-    """Show available files in the directory"""
+
     print("\n📁 Available Files:")
     print("-" * 30)
-    
+
     files = [
         ("skyhack.db", "SQLite database with flight data"),
         ("test_arnav.csv", "Original flight difficulty results"),
@@ -135,7 +129,7 @@ def show_files():
         ("requirements_advanced.txt", "Python dependencies"),
         ("README_Python_Dashboard.md", "Documentation")
     ]
-    
+
     for filename, description in files:
         if os.path.exists(filename):
             print(f"✅ {filename:<30} - {description}")
@@ -143,7 +137,7 @@ def show_files():
             print(f"❌ {filename:<30} - {description} (Missing)")
 
 def show_help():
-    """Show help and documentation"""
+
     print("\n❓ Help & Documentation")
     print("=" * 40)
     print("\n📊 Dashboard Features:")
@@ -152,24 +146,24 @@ def show_help():
     print("• Deep Learning: Neural network visualization")
     print("• Reinforcement Learning: RL agent training")
     print("• Real-Time Monitoring: Live flight status")
-    
+
     print("\n🔬 Analysis Features:")
     print("• Advanced feature engineering")
     print("• Multiple ML model training")
     print("• RL agent optimization")
     print("• Comprehensive visualizations")
     print("• Business insights generation")
-    
+
     print("\n📋 Requirements:")
     print("• Python 3.8+")
     print("• All packages from requirements_advanced.txt")
     print("• skyhack.db database file")
-    
+
     print("\n🚀 Quick Start:")
     print("1. Install dependencies: pip install -r requirements_advanced.txt")
     print("2. Launch dashboard: python launcher.py (option 1)")
     print("3. Run analysis: python launcher.py (option 2)")
-    
+
     print("\n📞 Support:")
     print("• Check README_Python_Dashboard.md for detailed documentation")
     print("• All code includes comprehensive comments")

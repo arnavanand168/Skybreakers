@@ -16,39 +16,29 @@ DATABASE_PATH = 'skyhack.db'
 class FlightAnalyzer:
     def __init__(self):
         self.conn = None
-        
+
     def get_connection(self):
         if not self.conn:
             self.conn = sqlite3.connect(DATABASE_PATH)
         return self.conn
-    
+
     def load_flight_data(self):
         conn = self.get_connection()
-        query = """
-        SELECT 
-            company_id, flight_number, scheduled_departure_date_local,
-            scheduled_departure_datetime_local, scheduled_departure_station_code, 
-            scheduled_arrival_station_code, difficulty_score, difficulty_classification, 
-            load_factor, ground_time_pressure, transfer_bag_ratio, ssr_intensity,
-            is_international, is_delayed, departure_delay_minutes,
-            total_passengers, total_bags, fleet_type
-        FROM ClassifiedFlights 
-        ORDER BY scheduled_departure_date_local, difficulty_score DESC
-        """
+        query =
         try:
             df = pd.read_sql_query(query, conn)
             return df
         except Exception as e:
             print(f"Database error: {e}")
             return None
-    
+
     def get_dashboard_stats(self):
         try:
             df = self.load_flight_data()
             if df is None:
                 print("No data loaded from database")
                 return None
-                
+
             stats = {
                 'total_flights': len(df),
                 'avg_delay': round(df['departure_delay_minutes'].mean(), 2),
@@ -61,78 +51,78 @@ class FlightAnalyzer:
         except Exception as e:
             print(f"Error in get_dashboard_stats: {e}")
             return None
-    
+
     def get_destination_analysis(self):
         df = self.load_flight_data()
         if df is None:
             return None
-            
+
         dest_analysis = df.groupby('scheduled_arrival_station_code').agg({
             'difficulty_classification': lambda x: (x == 'Difficult').sum(),
             'difficulty_score': 'mean',
             'departure_delay_minutes': 'mean'
         }).sort_values('difficulty_classification', ascending=False).head(15)
-        
+
         return dest_analysis.reset_index()
-    
+
     def get_fleet_analysis(self):
         df = self.load_flight_data()
         if df is None:
             return None
-            
+
         fleet_analysis = df.groupby('fleet_type').agg({
             'difficulty_classification': lambda x: (x == 'Difficult').sum(),
             'difficulty_score': 'mean',
             'total_passengers': 'mean'
         }).sort_values('difficulty_classification', ascending=False).head(15)
-        
+
         return fleet_analysis.reset_index()
-    
+
     def get_time_analysis(self):
         df = self.load_flight_data()
         if df is None:
             return None
-            
+
         try:
             df['departure_hour'] = pd.to_datetime(df['scheduled_departure_datetime_local'], errors='coerce').dt.hour
             df = df.dropna(subset=['departure_hour'])
         except:
             df['departure_hour'] = np.random.randint(6, 23, len(df))
-        
+
         time_analysis = df.groupby('departure_hour').agg({
             'difficulty_classification': lambda x: (x == 'Difficult').sum(),
             'departure_delay_minutes': 'mean'
         }).reset_index()
-        
+
         return time_analysis
-    
+
     def create_classification_chart(self):
         df = self.load_flight_data()
         if df is None:
             return None
-            
+
         classification_counts = df['difficulty_classification'].value_counts()
-        
-        colors = ['#2E8B57', '#FFD700', '#DC143C']
-        
+
+        colors = ['
+
         fig = go.Figure(data=[go.Pie(
             labels=classification_counts.index.tolist(),
             values=classification_counts.values.tolist(),
             marker_colors=colors
         )])
-        
+
         fig.update_layout(
             title="Flight Difficulty Distribution",
             showlegend=True
         )
-        
+
         return json.dumps(fig.to_dict(), cls=plotly.utils.PlotlyJSONEncoder)
-    
+
     def create_destination_chart(self):
         dest_data = self.get_destination_analysis()
         if dest_data is None:
             return None
-            
+
         fig = go.Figure()
         fig.add_trace(go.Bar(
             x=dest_data['scheduled_arrival_station_code'][:10].tolist(),
@@ -140,7 +130,7 @@ class FlightAnalyzer:
             marker_color='lightblue',
             name='Difficult Flights'
         ))
-        
+
         fig.update_layout(
             title="Top 10 Most Difficult Destinations",
             xaxis_title="Destination",
@@ -148,14 +138,14 @@ class FlightAnalyzer:
             showlegend=False,
             height=400
         )
-        
+
         return json.dumps(fig.to_dict(), cls=plotly.utils.PlotlyJSONEncoder)
-    
+
     def create_time_chart(self):
         time_data = self.get_time_analysis()
         if time_data is None:
             return None
-            
+
         fig = go.Figure()
         fig.add_trace(go.Scatter(
             x=time_data['departure_hour'].tolist(),
@@ -165,7 +155,7 @@ class FlightAnalyzer:
             line=dict(color='red'),
             marker=dict(color='red', size=6)
         ))
-        
+
         fig.update_layout(
             title="Difficult Flights by Hour of Day",
             xaxis_title="Hour of Day",
@@ -173,7 +163,7 @@ class FlightAnalyzer:
             showlegend=False,
             height=400
         )
-        
+
         return json.dumps(fig.to_dict(), cls=plotly.utils.PlotlyJSONEncoder)
 
 analyzer = FlightAnalyzer()

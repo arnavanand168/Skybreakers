@@ -1,5 +1,13 @@
 # Skybreakers - United Airlines Flight Difficulty Analysis
 
+[![GitHub](https://img.shields.io/badge/GitHub-Repository-blue?style=for-the-badge&logo=github)](https://github.com/arnavanand168/Skybreakers)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Vercel-green?style=for-the-badge&logo=vercel)](https://skybreakers.vercel.app)
+[![Python](https://img.shields.io/badge/Python-3.8+-blue?style=for-the-badge&logo=python)](https://python.org)
+[![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](LICENSE)
+
+> **Repository**: [https://github.com/arnavanand168/Skybreakers](https://github.com/arnavanand168/Skybreakers)  
+> **Live Dashboard**: [https://skybreakers.vercel.app](https://skybreakers.vercel.app)
+
 ## 🚀 Quick Start
 
 ### Prerequisites
@@ -22,6 +30,28 @@ The database file (`skyhack.db`) is not included due to GitHub's size limits. Re
 ```bash
 ./launch_working_dashboard.sh
 ```
+
+## 📋 Project Reports & Documentation
+
+### Comprehensive Analysis Reports
+- **[FINAL_COMPREHENSIVE_REPORT.md](FINAL_COMPREHENSIVE_REPORT.md)**: Complete analysis findings and business recommendations
+- **[presentation_report.md](presentation_report.md)**: Executive summary and key insights presentation
+- **[simple_analysis_report.txt](simple_analysis_report.txt)**: Quick analysis overview
+
+### Deployment & Setup Guides
+- **[DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md)**: Complete deployment instructions
+- **[DEPLOYMENT_SUCCESS_GUIDE.md](DEPLOYMENT_SUCCESS_GUIDE.md)**: Post-deployment verification steps
+- **[DEPLOY_TO_VERCEL.md](DEPLOY_TO_VERCEL.md)**: Vercel deployment specific instructions
+- **[INSTALLATION_GUIDE.md](INSTALLATION_GUIDE.md)**: Detailed installation and setup guide
+
+### Dashboard Documentation
+- **[README_Python_Dashboard.md](README_Python_Dashboard.md)**: Python dashboard usage guide
+- **[README_WEB_Dashboard.md](README_WEB_Dashboard.md)**: Web dashboard documentation
+- **[PROFESSIONAL_DASHBOARD_READY.md](PROFESSIONAL_DASHBOARD_READY.md)**: Dashboard features overview
+- **[QUICK_DEPLOY_FIX.md](QUICK_DEPLOY_FIX.md)**: Quick deployment troubleshooting
+
+### Live Application
+🌐 **Live Dashboard**: [skybreakers.vercel.app](https://skybreakers.vercel.app)
 
 ## 📊 Project Overview
 
@@ -59,15 +89,49 @@ This project provides a comprehensive **Flight Difficulty Scoring System** for U
 ### Project Structure
 ```
 skyhack/
-├── Airports Data.csv                    # Airport codes and country information
-├── Bag+Level+Data.csv                  # Bag-level data with transfer information
-├── Flight Level Data.csv                # Main flight operational data
-├── PNR Remark Level Data.csv            # Special service requests
-├── PNR+Flight+Level+Data.csv           # Passenger information
-├── complete_analysis.sql                # Complete analysis script
-├── skyhack.db                          # SQLite database
-├── test_arnav.csv                      # Final results export
-└── README.md                           # This file
+├── 📊 Data Files
+│   ├── Airports Data.csv                    # Airport codes and country information
+│   ├── Bag+Level+Data.csv                  # Bag-level data with transfer information
+│   ├── Flight Level Data.csv                # Main flight operational data
+│   ├── PNR Remark Level Data.csv            # Special service requests
+│   └── PNR+Flight+Level+Data.csv           # Passenger information
+├── 📋 Reports & Documentation
+│   ├── FINAL_COMPREHENSIVE_REPORT.md       # Complete analysis findings
+│   ├── presentation_report.md               # Executive summary
+│   ├── simple_analysis_report.txt           # Quick analysis overview
+│   ├── DEPLOYMENT_GUIDE.md                  # Deployment instructions
+│   ├── DEPLOYMENT_SUCCESS_GUIDE.md         # Post-deployment verification
+│   ├── DEPLOY_TO_VERCEL.md                  # Vercel deployment guide
+│   ├── INSTALLATION_GUIDE.md                # Installation guide
+│   ├── README_Python_Dashboard.md          # Python dashboard guide
+│   ├── README_WEB_Dashboard.md              # Web dashboard guide
+│   ├── PROFESSIONAL_DASHBOARD_READY.md     # Dashboard features
+│   └── QUICK_DEPLOY_FIX.md                 # Troubleshooting guide
+├── 🔧 Analysis Scripts
+│   ├── complete_analysis.sql                # Complete analysis script
+│   ├── setup_database.sql                  # Database setup
+│   ├── aggregate_data.sql                  # Data aggregation
+│   ├── build_master_table.sql              # Master table construction
+│   ├── eda_and_features.sql                # EDA and feature engineering
+│   ├── score_development.sql               # Score development
+│   ├── insights_analysis.sql               # Insights analysis
+│   └── export_results.sql                 # Results export
+├── 🚀 Application Files
+│   ├── app.py                              # Main Flask application
+│   ├── main.py                             # FastAPI application
+│   ├── flight_difficulty_dashboard.py      # Streamlit dashboard
+│   ├── comprehensive_analysis.py           # Analysis script
+│   ├── reinforcement_learning.py           # RL implementation
+│   └── advanced_ml_models.py               # ML models
+├── 🌐 Web Assets
+│   ├── templates/                          # HTML templates
+│   ├── static/                             # CSS and JavaScript
+│   └── api/                                # API endpoints
+├── 📦 Output Files
+│   ├── skyhack.db                          # SQLite database
+│   ├── test_arnav.csv                      # Final results export
+│   └── requirements*.txt                   # Dependencies
+└── README.md                               # This file
 ```
 
 ## How to Run the Analysis

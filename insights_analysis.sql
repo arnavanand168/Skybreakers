@@ -1,6 +1,6 @@
 
 
-SELECT 
+SELECT
     scheduled_arrival_station_code as destination,
     COUNT(*) as difficult_flight_count,
     ROUND(COUNT(*) * 100.0 / (SELECT COUNT(*) FROM ClassifiedFlights WHERE difficulty_classification = 'Difficult'), 2) as percentage_of_difficult_flights,
@@ -16,7 +16,7 @@ GROUP BY scheduled_arrival_station_code
 ORDER BY difficult_flight_count DESC
 LIMIT 10;
 
-SELECT 
+SELECT
     'Top Difficult Destinations Analysis' as analysis_type,
     scheduled_arrival_station_code as destination,
     COUNT(*) as total_flights,
@@ -28,8 +28,8 @@ SELECT
     ROUND(AVG(CASE WHEN difficulty_classification = 'Difficult' THEN is_international END), 3) as difficult_avg_international
 FROM ClassifiedFlights
 WHERE scheduled_arrival_station_code IN (
-    SELECT scheduled_arrival_station_code 
-    FROM ClassifiedFlights 
+    SELECT scheduled_arrival_station_code
+    FROM ClassifiedFlights
     WHERE difficulty_classification = 'Difficult'
     GROUP BY scheduled_arrival_station_code
     ORDER BY COUNT(*) DESC
@@ -38,7 +38,7 @@ WHERE scheduled_arrival_station_code IN (
 GROUP BY scheduled_arrival_station_code
 ORDER BY difficult_flights DESC;
 
-SELECT 
+SELECT
     fleet_type,
     COUNT(*) as total_flights,
     COUNT(CASE WHEN difficulty_classification = 'Difficult' THEN 1 END) as difficult_flights,
@@ -48,8 +48,8 @@ FROM ClassifiedFlights
 GROUP BY fleet_type
 ORDER BY difficult_percentage DESC;
 
-SELECT 
-    CASE 
+SELECT
+    CASE
         WHEN CAST(strftime('%H', scheduled_departure_datetime_local) AS INTEGER) BETWEEN 5 AND 7 THEN 'Early Morning (5-7)'
         WHEN CAST(strftime('%H', scheduled_departure_datetime_local) AS INTEGER) BETWEEN 8 AND 11 THEN 'Morning (8-11)'
         WHEN CAST(strftime('%H', scheduled_departure_datetime_local) AS INTEGER) BETWEEN 12 AND 15 THEN 'Afternoon (12-15)'
@@ -65,7 +65,7 @@ FROM ClassifiedFlights
 GROUP BY time_period
 ORDER BY difficult_percentage DESC;
 
-SELECT 
+SELECT
     carrier,
     COUNT(*) as total_flights,
     COUNT(CASE WHEN difficulty_classification = 'Difficult' THEN 1 END) as difficult_flights,

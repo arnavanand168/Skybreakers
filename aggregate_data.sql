@@ -1,5 +1,5 @@
 CREATE TABLE BagSummary AS
-SELECT 
+SELECT
     company_id,
     flight_number,
     scheduled_departure_date_local,
@@ -9,11 +9,11 @@ SELECT
     SUM(CASE WHEN bag_type = 'Transfer' THEN 1 ELSE 0 END) as transfer_bags,
     SUM(CASE WHEN bag_type = 'Transfer' THEN 1 ELSE 0 END) * 1.0 / COUNT(*) as transfer_bag_ratio
 FROM Bags
-GROUP BY company_id, flight_number, scheduled_departure_date_local, 
+GROUP BY company_id, flight_number, scheduled_departure_date_local,
          scheduled_departure_station_code, scheduled_arrival_station_code;
 
 CREATE TABLE PassengerSummary AS
-SELECT 
+SELECT
     company_id,
     flight_number,
     scheduled_departure_date_local,
@@ -28,9 +28,8 @@ FROM Passengers
 GROUP BY company_id, flight_number, scheduled_departure_date_local,
          scheduled_departure_station_code, scheduled_arrival_station_code;
 
--- 3. Summarize Special Needs Data: Join Remarks with Passengers, then count unique special_service_requests
 CREATE TABLE SpecialNeedsSummary AS
-SELECT 
+SELECT
     p.company_id,
     p.flight_number,
     p.scheduled_departure_date_local,
@@ -44,7 +43,6 @@ INNER JOIN Remarks r ON p.record_locator = r.record_locator
 GROUP BY p.company_id, p.flight_number, p.scheduled_departure_date_local,
          p.scheduled_departure_station_code, p.scheduled_arrival_station_code;
 
--- Display summary statistics
 SELECT 'BagSummary' as table_name, COUNT(*) as row_count FROM BagSummary
 UNION ALL
 SELECT 'PassengerSummary', COUNT(*) FROM PassengerSummary

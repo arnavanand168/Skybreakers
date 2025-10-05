@@ -11,49 +11,44 @@ app = Flask(__name__)
 app.secret_key = 'demo-secret-key-for-united-airlines-dashboard'
 
 class DemoFlightAnalyzer:
-    """Demo analyzer with sample data for deployment"""
-    
+
     def __init__(self):
-        # Sample data based on our analysis results
+
         self.flight_data = self.generate_sample_data()
-        
+
     def generate_sample_data(self):
-        """Generate realistic sample data for demo purposes"""
-        np.random.seed(42)  # For consistent results
-        
-        # Generate sample flights
+
+        np.random.seed(42)
+
         n_flights = 8155
         destinations = ['LAX', 'SFO', 'YUL', 'YYZ', 'LHR', 'STL', 'YOW', 'DEN', 'SEA', 'ATL', 'ORD', 'JFK']
         fleet_types = ['B738', 'B737', 'B757', 'B767', 'B787', 'A319']
         classifications = ['Easy', 'Medium', 'Difficult'] * (n_flights // 3 + 1)
-        
-        # Generate realistic data
+
         data = []
         for i in range(n_flights):
-            # Time-based patterns
+
             hour = np.random.randint(6, 23)
             month_day = np.random.randint(1, 31)
-            
-            # Difficulty patterns (matches our analysis)
-            is_difficult = np.random.choice([0, 1], p=[0.3, 0.7])  # 30% difficult base rate
-            if np.random.random() < 0.1:  # Peak hours are more difficult
+
+            is_difficult = np.random.choice([0, 1], p=[0.3, 0.7])
+            if np.random.random() < 0.1:
                 is_difficult = 1
-            
+
             if is_difficult:
                 difficulty_score = np.random.uniform(0.7, 1.0)
                 classification = 'Difficult'
             else:
                 difficulty_score = np.random.uniform(0.0, 0.6)
                 classification = np.random.choice(['Easy', 'Medium'], p=[0.6, 0.4])
-            
-            # Destination-based patterns
+
             dest = np.random.choice(destinations)
-            if dest in ['YUL', 'YYZ', 'LHR']:  # International/Canada are harder
+            if dest in ['YUL', 'YYZ', 'LHR']:
                 difficulty_score += 0.2
                 classification = 'Difficult' if difficulty_score > 0.7 else 'Medium'
             elif dest in ['YOW']:
                 difficulty_score += 0.3
-            
+
             flight_data = {
                 'company_id': 'UA',
                 'flight_number': f'UA{np.random.randint(100, 9999)}',
@@ -76,17 +71,17 @@ class DemoFlightAnalyzer:
                 'departure_hour': hour
             }
             data.append(flight_data)
-        
+
         return pd.DataFrame(data)
-    
+
     def load_flight_data(self):
-        """Load flight data from sample data"""
+
         return self.flight_data
-    
+
     def get_dashboard_stats(self):
-        """Get key dashboard statistics"""
+
         df = self.load_flight_data()
-        
+
         stats = {
             'total_flights': len(df),
             'avg_delay': round(df['departure_delay_minutes'].mean(), 1),
@@ -95,51 +90,50 @@ class DemoFlightAnalyzer:
             'difficulty_distribution': df['difficulty_classification'].value_counts().to_dict()
         }
         return stats
-    
+
     def get_destination_analysis(self):
-        """Get destination analysis data"""
+
         df = self.load_flight_data()
-        
+
         dest_analysis = df.groupby('scheduled_arrival_station_code').agg({
             'difficulty_classification': lambda x: (x == 'Difficult').sum(),
             'difficulty_score': 'mean',
             'departure_delay_minutes': 'mean'
         }).sort_values('difficulty_classification', ascending=False).head(15)
-        
+
         return dest_analysis.reset_index()
-    
+
     def get_fleet_analysis(self):
-        """Get fleet analysis data"""
+
         df = self.load_flight_data()
-        
+
         fleet_analysis = df.groupby('fleet_type').agg({
             'difficulty_classification': lambda x: (x == 'Difficult').sum(),
             'difficulty_score': 'mean',
             'total_passengers': 'mean'
         }).sort_values('difficulty_classification', ascending=False).head(15)
-        
+
         return fleet_analysis.reset_index()
-    
+
     def get_time_analysis(self):
-        """Get time analysis data"""
+
         df = self.load_flight_data()
-        
+
         time_analysis = df.groupby('departure_hour').agg({
             'difficulty_classification': lambda x: (x == 'Difficult').sum(),
             'departure_delay_minutes': 'mean'
         }).reset_index()
-        
+
         return time_analysis
-    
+
     def create_classification_chart(self):
-        """Create flight classification pie chart"""
+
         df = self.load_flight_data()
         classification_counts = df['difficulty_classification'].value_counts()
-        
-        # Match colors from our analysis
-        colors = {'Easy': '#2E8B57', 'Medium': '#FFD700', 'Difficult': '#DC143C'}
-        pie_colors = [colors.get(label, '#888') for label in classification_counts.index]
-        
+
+        colors = {'Easy': '
+        pie_colors = [colors.get(label, '
+
         fig = go.Figure(data=[go.Pie(
             labels=classification_counts.index,
             values=classification_counts.values,
@@ -147,19 +141,19 @@ class DemoFlightAnalyzer:
             textinfo='label+percent',
             textposition='auto'
         )])
-        
+
         fig.update_layout(
             title="Flight Difficulty Distribution",
             showlegend=True,
             margin=dict(t=50)
         )
-        
+
         return json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
-    
+
     def create_destination_chart(self):
-        """Create destination difficulty chart"""
+
         dest_data = self.get_destination_analysis()
-        
+
         fig = go.Figure(data=[go.Bar(
             x=dest_data['scheduled_arrival_station_code'][:10],
             y=dest_data['difficulty_classification'][:10],
@@ -167,20 +161,20 @@ class DemoFlightAnalyzer:
             text=dest_data['difficulty_classification'][:10],
             textposition='auto'
         )])
-        
+
         fig.update_layout(
             title="Top 10 Most Difficult Destinations",
             xaxis_title="Destination",
             yaxis_title="Number of Difficult Flights",
             margin=dict(t=50)
         )
-        
+
         return json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
-    
+
     def create_time_chart(self):
-        """Create time analysis chart"""
+
         time_data = self.get_time_analysis()
-        
+
         fig = go.Figure()
         fig.add_trace(go.Scatter(
             x=time_data['departure_hour'],
@@ -190,7 +184,7 @@ class DemoFlightAnalyzer:
             line=dict(color='red', width=3),
             marker=dict(size=8)
         ))
-        
+
         fig.add_trace(go.Scatter(
             x=time_data['departure_hour'],
             y=time_data['departure_delay_minutes'],
@@ -200,7 +194,7 @@ class DemoFlightAnalyzer:
             marker=dict(size=6),
             yaxis='y2'
         ))
-        
+
         fig.update_layout(
             title="Difficult Flights & Avg Delay by Hour of Day",
             xaxis_title="Hour of Day",
@@ -212,61 +206,60 @@ class DemoFlightAnalyzer:
             ),
             margin=dict(t=50)
         )
-        
+
         return json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
 
-# Initialize analyzer
 analyzer = DemoFlightAnalyzer()
 
 @app.route('/')
 def dashboard():
-    """Main dashboard page"""
+
     return render_template('dashboard.html')
 
 @app.route('/api/stats')
 def get_stats():
-    """API endpoint for dashboard statistics"""
+
     stats = analyzer.get_dashboard_stats()
     return jsonify(stats)
 
 @app.route('/api/classification-chart')
 def get_classification_chart():
-    """API endpoint for classification pie chart"""
+
     chart_json = analyzer.create_classification_chart()
     return chart_json
 
 @app.route('/api/destination-chart')
 def get_destination_chart():
-    """API endpoint for destination bar chart"""
+
     chart_json = analyzer.create_destination_chart()
     return chart_json
 
 @app.route('/api/time-chart')
 def get_time_chart():
-    """API endpoint for time analysis line chart"""
+
     chart_json = analyzer.create_time_chart()
     return chart_json
 
 @app.route('/api/destinations')
 def get_destinations():
-    """API endpoint for destination data"""
+
     dest_data = analyzer.get_destination_analysis()
     return jsonify(dest_data.to_dict('records'))
 
 @app.route('/api/fleet')
 def get_fleet():
-    """API endpoint for fleet data"""
+
     fleet_data = analyzer.get_fleet_analysis()
     return jsonify(fleet_data.to_dict('records'))
 
 @app.route('/about')
 def about():
-    """About page"""
+
     return render_template('about.html')
 
 @app.route('/api/health')
 def health_check():
-    """Health check endpoint for deployment"""
+
     return jsonify({
         'status': 'healthy',
         'timestamp': datetime.now().isoformat(),
@@ -277,7 +270,7 @@ def health_check():
 
 @app.route('/demo')
 def demo():
-    """Demo page showing system capabilities"""
+
     return jsonify({
         'message': 'United Airlines Flight Difficulty Dashboard - Demo Mode',
         'total_flights': 8155,
